@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background/background_service.dart';
 import 'package:notifications/notifications.dart';
 
-import 'flutter_background_service.dart';
-
 Notifications? _notifications;
 StreamSubscription<NotificationEvent>? _subscription;
 
