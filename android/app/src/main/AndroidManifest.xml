@@ -13,7 +13,8 @@
         android:showWhenLocked="true"
         android:turnScreenOn="true">
         <receiver
-            android:name=".MyReceiver">
+            android:name=".MyReceiver"
+            android:label="RestartServiceWhenStopped">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />

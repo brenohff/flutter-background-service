@@ -33,11 +33,10 @@ public class MyService extends Service {
 
     @Override
     public void onDestroy() {
-        setSharedPreferences(ON_DESTROY, "Service destroyed at " + new Date().toString());
-
-        sendBroadcast(new Intent(this, MyReceiver.class));
-
         super.onDestroy();
+
+        setSharedPreferences(ON_DESTROY, "Service destroyed at " + new Date().toString());
+        sendBroadcast(new Intent(this, MyReceiver.class));
     }
 
     @Override
