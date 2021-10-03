@@ -17,7 +17,7 @@ Future<bool> stop() async {
   return await BackgroundService().stopService();
 }
 
-Future<bool> status() async {
+Future<String> status() async {
   return await BackgroundService().statusService();
 }
 

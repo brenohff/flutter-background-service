@@ -19,7 +19,6 @@ import org.json.JSONObject;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.plugin.common.JSONMethodCodec;
 import io.flutter.plugin.common.MethodChannel;
-import me.carda.awesome_notifications.utils.StringUtils;
 
 public class MainActivity extends FlutterActivity {
 
@@ -34,19 +33,7 @@ public class MainActivity extends FlutterActivity {
                 populateSharedPreferences((JSONObject) call.arguments);
 
                 if (!isMyServiceRunning(MyService.class)) {
-                    String destroyed = getSharedPreferences(ON_DESTROY);
-                    String broadcast = getSharedPreferences(RECEIVER_BROADCAST);
-
-                    if (!StringUtils.isNullOrEmpty(destroyed) && !StringUtils.isNullOrEmpty(broadcast)) {
-                        Toast.makeText(this, destroyed + " - " + broadcast, Toast.LENGTH_LONG).show();
-                    } else if (!StringUtils.isNullOrEmpty(destroyed)) {
-                        Toast.makeText(this, destroyed, Toast.LENGTH_LONG).show();
-                    } else if (!StringUtils.isNullOrEmpty(broadcast)) {
-                        Toast.makeText(this, broadcast, Toast.LENGTH_LONG).show();
-                    }
-
                     startService(intent);
-
                     result.success(true);
                 } else {
                     Toast.makeText(this, "Service already started", Toast.LENGTH_SHORT).show();
@@ -66,11 +53,11 @@ public class MainActivity extends FlutterActivity {
 
             if (call.method.equals("statusService")) {
                 boolean isRunning = isMyServiceRunning(MyService.class);
-                boolean isBroadcastRunning = isMyServiceRunning(MyReceiver.class);
 
-                Toast.makeText(this, String.format("Service: %b - Broadcast: %b", isRunning, isBroadcastRunning), Toast.LENGTH_LONG).show();
+                String destroyed = getSharedPreferences(ON_DESTROY);
+                String broadcast = getSharedPreferences(RECEIVER_BROADCAST);
 
-                result.success(isRunning);
+                result.success(String.format("Service: %s - %s - %s", isRunning ? "Running" : "Stopped", broadcast, destroyed));
             }
         });
     }
