@@ -4,44 +4,72 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import java.util.Date;
+
+import io.flutter.FlutterInjector;
+import io.flutter.embedding.engine.FlutterEngine;
+import io.flutter.embedding.engine.dart.DartExecutor;
+import io.flutter.view.FlutterCallbackInformation;
+
 public class MyService extends Service {
 
-    boolean isRunning = false;
+    public static final String SHARED_PREFERENCES = "br.com.brenohff.flutter_background";
+    public static final String METHOD_HANDLE = "METHOD_HANDLE";
+    public static final String ON_DESTROY = "ON_DESTROY";
 
     @Override
     public void onCreate() {
         super.onCreate();
-        isRunning = true;
-
-        System.out.println("MyService.onCreate");
-
         createNotificationChannel();
     }
 
     @Override
     public void onDestroy() {
-        isRunning = false;
+        setSharedPreferences(ON_DESTROY, "Service destroyed at " + new Date().toString());
+
         Toast.makeText(this, "Service Destroy", Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        isRunning = true;
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        long callbackHandle = Long.parseLong(getSharedPreferences(METHOD_HANDLE));
+
+        FlutterCallbackInformation callback = FlutterCallbackInformation.lookupCallbackInformation(callbackHandle);
+
+        if (callback == null || callbackHandle == 0) {
+            Toast.makeText(this, "Service Failure", Toast.LENGTH_LONG).show();
+        } else {
+            DartExecutor.DartCallback dartCallback = new DartExecutor.DartCallback(getAssets(), FlutterInjector.instance().flutterLoader().findAppBundlePath(), callback);
+            FlutterEngine backgroundEngine = new FlutterEngine(this);
+            backgroundEngine.getDartExecutor().executeDartCallback(dartCallback);
+
+            Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        }
         return Service.START_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return null;
     }
 
     // Others methods
+
+    public void setSharedPreferences(String key, String value) {
+        SharedPreferences pref = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
+        pref.edit().putString(key, value).apply();
+    }
+
+    public String getSharedPreferences(String key) {
+        SharedPreferences pref = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
+        return pref.getString(key, "");
+    }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

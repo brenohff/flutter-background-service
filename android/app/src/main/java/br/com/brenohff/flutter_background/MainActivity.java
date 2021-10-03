@@ -1,20 +1,22 @@
 package br.com.brenohff.flutter_background;
 
+import static br.com.brenohff.flutter_background.MyService.METHOD_HANDLE;
+import static br.com.brenohff.flutter_background.MyService.ON_DESTROY;
+import static br.com.brenohff.flutter_background.MyService.SHARED_PREFERENCES;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.flutter.FlutterInjector;
 import io.flutter.embedding.android.FlutterActivity;
-import io.flutter.embedding.engine.FlutterEngine;
-import io.flutter.embedding.engine.dart.DartExecutor;
 import io.flutter.plugin.common.JSONMethodCodec;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.view.FlutterCallbackInformation;
+import me.carda.awesome_notifications.utils.StringUtils;
 
 public class MainActivity extends FlutterActivity {
 
@@ -22,47 +24,38 @@ public class MainActivity extends FlutterActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        System.out.println("MainActivity.onCreate");
-
         new MethodChannel(getFlutterEngine().getDartExecutor().getBinaryMessenger(), "br.com.brenohff.background", JSONMethodCodec.INSTANCE).setMethodCallHandler((call, result) -> {
-            JSONObject arg = (JSONObject) call.arguments;
-
             if (call.method.equals("startService")) {
-                long callbackHandle;
+                populateSharedPreferences((JSONObject) call.arguments);
 
-                try {
-                    callbackHandle = arg.getLong("handle");
-                } catch (JSONException e) {
-                    System.out.println("Failed read arguments");
-                    result.error("100", "Failed read arguments", null);
-                    return;
+                String destroyed = getSharedPreferences(ON_DESTROY);
+                if(!StringUtils.isNullOrEmpty(destroyed)){
+                    Toast.makeText(this, destroyed, Toast.LENGTH_LONG).show();
                 }
-
-                FlutterCallbackInformation callback = FlutterCallbackInformation.lookupCallbackInformation(callbackHandle);
-                if (callback == null) {
-                    System.out.println("Failed creating callback");
-                    return;
-                }
-
-                DartExecutor.DartCallback dartCallback = new DartExecutor.DartCallback(getAssets(), FlutterInjector.instance().flutterLoader().findAppBundlePath(), callback);
-                FlutterEngine backgroundEngine = new FlutterEngine(this);
-                backgroundEngine.getDartExecutor().executeDartCallback(dartCallback);
 
                 startService(new Intent(this, MyService.class));
                 result.success(true);
-                return;
-            }
-
-            if (call.method.equals("stopService")) {
-                System.out.println("MyService.onCreate.MethodChannel.stopService");
-                stopService(new Intent(this, MyService.class));
-                result.success(true);
-                return;
-            }
-
-            if (call.method.equals("statusService")) {
-                result.success(true);
             }
         });
+    }
+
+    private void populateSharedPreferences(JSONObject args) {
+        if (args != null) {
+            try {
+                setSharedPreferences(METHOD_HANDLE, Long.toString(args.getLong("handle")));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void setSharedPreferences(String key, String value) {
+        SharedPreferences pref = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
+        pref.edit().putString(key, value).apply();
+    }
+
+    public String getSharedPreferences(String key) {
+        SharedPreferences pref = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
+        return pref.getString(key, "");
     }
 }
