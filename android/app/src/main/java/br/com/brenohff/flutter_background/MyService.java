@@ -15,15 +15,18 @@ import io.flutter.FlutterInjector;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.dart.DartExecutor;
 import io.flutter.view.FlutterCallbackInformation;
+import io.flutter.view.FlutterMain;
 
 public class MyService extends Service {
-
     public static final String SHARED_PREFERENCES = "br.com.brenohff.flutter_background";
     public static final String METHOD_HANDLE = "METHOD_HANDLE";
     public static final String ON_DESTROY = "ON_DESTROY";
+    public static final String RECEIVER_BROADCAST = "RECEIVER_BROADCAST";
 
     @Override
     public void onCreate() {
+        FlutterMain.startInitialization(this);
+        FlutterMain.ensureInitializationComplete(this, new String[0]);
         super.onCreate();
         createNotificationChannel();
     }
@@ -31,7 +34,6 @@ public class MyService extends Service {
     @Override
     public void onDestroy() {
         setSharedPreferences(ON_DESTROY, "Service destroyed at " + new Date().toString());
-
         Toast.makeText(this, "Service Destroy", Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
@@ -45,8 +47,9 @@ public class MyService extends Service {
         if (callback == null || callbackHandle == 0) {
             Toast.makeText(this, "Service Failure", Toast.LENGTH_LONG).show();
         } else {
-            DartExecutor.DartCallback dartCallback = new DartExecutor.DartCallback(getAssets(), FlutterInjector.instance().flutterLoader().findAppBundlePath(), callback);
             FlutterEngine backgroundEngine = new FlutterEngine(this);
+
+            DartExecutor.DartCallback dartCallback = new DartExecutor.DartCallback(getAssets(), FlutterInjector.instance().flutterLoader().findAppBundlePath(), callback);
             backgroundEngine.getDartExecutor().executeDartCallback(dartCallback);
 
             Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();

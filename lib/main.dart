@@ -46,26 +46,37 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              child: const Text('Start Service'),
-              onPressed: () {
-                start();
-              },
-            ),
-            ElevatedButton(
-              child: const Text('Stop Service'),
-              onPressed: () {
-                BackgroundService().stopService();
-              },
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Flutter Background Service'),
+      ),
+      body: Container(
+        color: Colors.white,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                child: const Text('Start Service'),
+                onPressed: () {
+                  start();
+                },
+              ),
+              ElevatedButton(
+                child: const Text('Stop Service'),
+                onPressed: () {
+                  stop();
+                },
+              ),
+              ElevatedButton(
+                child: const Text('Status Service'),
+                onPressed: () {
+                  status();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

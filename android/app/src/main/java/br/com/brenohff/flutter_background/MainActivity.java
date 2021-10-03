@@ -2,8 +2,11 @@ package br.com.brenohff.flutter_background;
 
 import static br.com.brenohff.flutter_background.MyService.METHOD_HANDLE;
 import static br.com.brenohff.flutter_background.MyService.ON_DESTROY;
+import static br.com.brenohff.flutter_background.MyService.RECEIVER_BROADCAST;
 import static br.com.brenohff.flutter_background.MyService.SHARED_PREFERENCES;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -31,16 +34,31 @@ public class MainActivity extends FlutterActivity {
                 populateSharedPreferences((JSONObject) call.arguments);
 
                 String destroyed = getSharedPreferences(ON_DESTROY);
-                if(!StringUtils.isNullOrEmpty(destroyed)){
+                String broadcast = getSharedPreferences(RECEIVER_BROADCAST);
+                if(!StringUtils.isNullOrEmpty(destroyed) && !StringUtils.isNullOrEmpty(broadcast)){
+                    Toast.makeText(this, destroyed + " - " + broadcast, Toast.LENGTH_LONG).show();
+                } else if(!StringUtils.isNullOrEmpty(destroyed)) {
                     Toast.makeText(this, destroyed, Toast.LENGTH_LONG).show();
+                } else if(!StringUtils.isNullOrEmpty(broadcast)) {
+                    Toast.makeText(this, broadcast, Toast.LENGTH_LONG).show();
                 }
 
                 startService(intent);
+
                 result.success(true);
             }
 
             if(call.method.equals("stopService")) {
                 stopService(intent);
+            }
+
+            if(call.method.equals("statusService")) {
+                boolean isRunning = isMyServiceRunning(MyService.class);
+                boolean isBroadcastRunning = isMyServiceRunning(MyReceiver.class);
+
+                Toast.makeText(this, String.format("Service: %b - Broadcast: %b", isRunning, isBroadcastRunning), Toast.LENGTH_LONG).show();
+
+                result.success(isRunning);
             }
         });
     }
@@ -63,5 +81,15 @@ public class MainActivity extends FlutterActivity {
     public String getSharedPreferences(String key) {
         SharedPreferences pref = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
         return pref.getString(key, "");
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

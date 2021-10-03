@@ -12,6 +12,15 @@ Future<bool> start() async {
   return await BackgroundService.initialize(onStart);
 }
 
+Future<bool> stop() async {
+  _subscription?.cancel();
+  return await BackgroundService().stopService();
+}
+
+Future<bool> status() async {
+  return await BackgroundService().statusService();
+}
+
 void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
   startListening();
@@ -27,9 +36,11 @@ void startListening() {
 }
 
 void onData(NotificationEvent event) {
-  if (event.packageName != 'br.com.brenohff.flutter_background' && event.packageName != 'com.crunchyroll.crunchyroid' && event.packageName != 'com.spotify.music') {
+  if (event.packageName != 'br.com.brenohff.flutter_background'
+      && event.packageName != 'com.crunchyroll.crunchyroid'
+      && event.packageName != 'com.spotify.music'
+      && event.packageName != 'com.google.android.gms') {
     _showNotification(event);
-    print(event.toString());
   }
 }
 
