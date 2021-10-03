@@ -31,7 +31,7 @@ void startListening() {
   try {
     _subscription = _notifications!.notificationStream!.listen(onData);
   } on NotificationException catch (exception) {
-    print(exception);
+    debugPrint(exception.toString());
   }
 }
 

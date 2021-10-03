@@ -1,7 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background/background_service.dart';
 
 import 'notification.dart';
 
@@ -70,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('Flutter Background Service'),
       ),
       body: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         color: Colors.white,
         child: Center(
           child: Column(
