@@ -27,7 +27,7 @@ void startListening() {
 }
 
 void onData(NotificationEvent event) {
-  if (event.packageName != 'br.com.brenohff.flutter_background' || event.packageName != 'com.crunchyroll.crunchyroid') {
+  if (event.packageName != 'br.com.brenohff.flutter_background' && event.packageName != 'com.crunchyroll.crunchyroid' && event.packageName != 'com.spotify.music') {
     _showNotification(event);
     print(event.toString());
   }
