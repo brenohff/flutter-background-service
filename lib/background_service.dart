@@ -30,10 +30,6 @@ class BackgroundService {
     return await _backgroundChannel.invokeMethod("stopService");
   }
 
-  Future<bool> statusService() async {
-    return await _backgroundChannel.invokeMethod("statusService");
-  }
-
   void _setupBackgroundService() {
     _backgroundChannel.setMethodCallHandler(_handle);
   }

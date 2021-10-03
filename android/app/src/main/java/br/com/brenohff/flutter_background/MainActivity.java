@@ -25,6 +25,8 @@ public class MainActivity extends FlutterActivity {
         super.onCreate(savedInstanceState);
 
         new MethodChannel(getFlutterEngine().getDartExecutor().getBinaryMessenger(), "br.com.brenohff.background", JSONMethodCodec.INSTANCE).setMethodCallHandler((call, result) -> {
+            Intent intent = new Intent(this, MyService.class);
+
             if (call.method.equals("startService")) {
                 populateSharedPreferences((JSONObject) call.arguments);
 
@@ -33,8 +35,12 @@ public class MainActivity extends FlutterActivity {
                     Toast.makeText(this, destroyed, Toast.LENGTH_LONG).show();
                 }
 
-                startService(new Intent(this, MyService.class));
+                startService(intent);
                 result.success(true);
+            }
+
+            if(call.method.equals("stopService")) {
+                stopService(intent);
             }
         });
     }

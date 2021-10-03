@@ -27,7 +27,7 @@ void startListening() {
 }
 
 void onData(NotificationEvent event) {
-  if (event.packageName != 'br.com.brenohff.flutter_background') {
+  if (event.packageName != 'br.com.brenohff.flutter_background' || event.packageName != 'com.crunchyroll.crunchyroid') {
     _showNotification(event);
     print(event.toString());
   }
@@ -38,8 +38,8 @@ Future _showNotification(NotificationEvent event) async {
     content: NotificationContent(
       id: 0,
       channelKey: 'basic_channel',
-      title: event.title,
-      body: event.message,
+      title: '${event.title}',
+      body: '${event.message} - ${event.packageName}',
       color: const Color(0xFF313031),
       backgroundColor: const Color(0xFF313031),
     ),
