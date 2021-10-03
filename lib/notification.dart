@@ -8,6 +8,14 @@ import 'package:notifications/notifications.dart';
 Notifications? _notifications;
 StreamSubscription<NotificationEvent>? _subscription;
 
+List<String> ignorePackage = [
+  'br.com.brenohff.flutter_background',
+  'com.crunchyroll.crunchyroid',
+  'com.spotify.music',
+  'com.google.android.gms',
+  'com.whatsapp',
+];
+
 Future<bool> start() async {
   return await BackgroundService.initialize(onStart);
 }
@@ -36,10 +44,7 @@ void startListening() {
 }
 
 void onData(NotificationEvent event) {
-  if (event.packageName != 'br.com.brenohff.flutter_background'
-      && event.packageName != 'com.crunchyroll.crunchyroid'
-      && event.packageName != 'com.spotify.music'
-      && event.packageName != 'com.google.android.gms') {
+  if (!ignorePackage.contains(event.packageName)) {
     _showNotification(event);
   }
 }
