@@ -17,11 +17,9 @@ public class MyReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         setSharedPreferences(context, RECEIVER_BROADCAST, "Started broadcast at " + new Date().toString());
 
-        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            Intent i = new Intent(context, MyService.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startService(i);
-        }
+        Intent i = new Intent(context, MyService.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startService(i);
     }
 
     public void setSharedPreferences(Context context, String key, String value) {

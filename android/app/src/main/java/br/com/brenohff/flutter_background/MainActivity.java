@@ -33,26 +33,38 @@ public class MainActivity extends FlutterActivity {
             if (call.method.equals("startService")) {
                 populateSharedPreferences((JSONObject) call.arguments);
 
-                String destroyed = getSharedPreferences(ON_DESTROY);
-                String broadcast = getSharedPreferences(RECEIVER_BROADCAST);
-                if(!StringUtils.isNullOrEmpty(destroyed) && !StringUtils.isNullOrEmpty(broadcast)){
-                    Toast.makeText(this, destroyed + " - " + broadcast, Toast.LENGTH_LONG).show();
-                } else if(!StringUtils.isNullOrEmpty(destroyed)) {
-                    Toast.makeText(this, destroyed, Toast.LENGTH_LONG).show();
-                } else if(!StringUtils.isNullOrEmpty(broadcast)) {
-                    Toast.makeText(this, broadcast, Toast.LENGTH_LONG).show();
+                if (!isMyServiceRunning(MyService.class)) {
+                    String destroyed = getSharedPreferences(ON_DESTROY);
+                    String broadcast = getSharedPreferences(RECEIVER_BROADCAST);
+
+                    if (!StringUtils.isNullOrEmpty(destroyed) && !StringUtils.isNullOrEmpty(broadcast)) {
+                        Toast.makeText(this, destroyed + " - " + broadcast, Toast.LENGTH_LONG).show();
+                    } else if (!StringUtils.isNullOrEmpty(destroyed)) {
+                        Toast.makeText(this, destroyed, Toast.LENGTH_LONG).show();
+                    } else if (!StringUtils.isNullOrEmpty(broadcast)) {
+                        Toast.makeText(this, broadcast, Toast.LENGTH_LONG).show();
+                    }
+
+                    startService(intent);
+
+                    result.success(true);
+                } else {
+                    Toast.makeText(this, "Service already started", Toast.LENGTH_SHORT).show();
+                    result.success(false);
                 }
-
-                startService(intent);
-
-                result.success(true);
             }
 
-            if(call.method.equals("stopService")) {
-                stopService(intent);
+            if (call.method.equals("stopService")) {
+                if (isMyServiceRunning(MyService.class)) {
+                    stopService(intent);
+                    result.success(true);
+                } else {
+                    Toast.makeText(this, "Service already stopped", Toast.LENGTH_SHORT).show();
+                    result.success(false);
+                }
             }
 
-            if(call.method.equals("statusService")) {
+            if (call.method.equals("statusService")) {
                 boolean isRunning = isMyServiceRunning(MyService.class);
                 boolean isBroadcastRunning = isMyServiceRunning(MyReceiver.class);
 

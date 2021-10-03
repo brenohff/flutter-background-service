@@ -34,7 +34,9 @@ public class MyService extends Service {
     @Override
     public void onDestroy() {
         setSharedPreferences(ON_DESTROY, "Service destroyed at " + new Date().toString());
-        Toast.makeText(this, "Service Destroy", Toast.LENGTH_LONG).show();
+
+        sendBroadcast(new Intent(this, MyReceiver.class));
+
         super.onDestroy();
     }
 
