@@ -45,7 +45,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String serviceStatus = "";
-  String broadcastStatus = "";
   String serviceDestroyedInfo = "";
 
   Future<void> getStatus() async {
@@ -55,8 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       serviceStatus = statusSplit[0];
-      broadcastStatus = statusSplit[1];
-      serviceDestroyedInfo = statusSplit[2];
+      serviceDestroyedInfo = statusSplit[1];
     });
   }
 
@@ -85,25 +83,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 10),
-              Text(
-                broadcastStatus,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 25, top: 10),
                 child: Text(
-                  serviceDestroyedInfo,
+                  'Service destroyed at:\n$serviceDestroyedInfo',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 16,
                     color: Colors.black,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

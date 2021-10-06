@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REORDER_TASKS"/>
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -24,7 +25,7 @@
         <service
             android:name=".MyService"
             android:enabled="true"
-            android:exported="true" />
+            android:stopWithTask="false"/>
 
         <service
             android:name="dk.cachet.notifications.NotificationListener"

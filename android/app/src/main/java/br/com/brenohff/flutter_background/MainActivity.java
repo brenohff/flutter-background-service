@@ -2,7 +2,6 @@ package br.com.brenohff.flutter_background;
 
 import static br.com.brenohff.flutter_background.MyService.METHOD_HANDLE;
 import static br.com.brenohff.flutter_background.MyService.ON_DESTROY;
-import static br.com.brenohff.flutter_background.MyService.RECEIVER_BROADCAST;
 import static br.com.brenohff.flutter_background.MyService.SHARED_PREFERENCES;
 
 import android.app.ActivityManager;
@@ -55,9 +54,8 @@ public class MainActivity extends FlutterActivity {
                 boolean isRunning = isMyServiceRunning(MyService.class);
 
                 String destroyed = getSharedPreferences(ON_DESTROY);
-                String broadcast = getSharedPreferences(RECEIVER_BROADCAST);
 
-                result.success(String.format("Service: %s - %s - %s", isRunning ? "Running" : "Stopped", broadcast, destroyed));
+                result.success(String.format("Service: %s - %s", isRunning ? "Running" : "Stopped", destroyed));
             }
         });
     }

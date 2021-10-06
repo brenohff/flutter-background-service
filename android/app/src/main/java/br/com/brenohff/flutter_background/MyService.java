@@ -27,16 +27,16 @@ public class MyService extends Service {
     public void onCreate() {
         FlutterMain.startInitialization(this);
         FlutterMain.ensureInitializationComplete(this, new String[0]);
+
         super.onCreate();
-        createNotificationChannel();
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
-        setSharedPreferences(ON_DESTROY, "Service destroyed at " + new Date().toString());
+        setSharedPreferences(ON_DESTROY, new Date().toString());
         sendBroadcast(new Intent(this, MyReceiver.class));
+
+        super.onDestroy();
     }
 
     @Override
@@ -55,6 +55,7 @@ public class MyService extends Service {
 
             Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
         }
+
         return Service.START_STICKY;
     }
 
